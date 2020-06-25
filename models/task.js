@@ -1,7 +1,19 @@
 const mongoose = require('mongoose')
 
+/**
+ * Mongoose Schema -- Task model defines the attributes for a task entry in the database
+ * @prop {String} title Title of the Task
+ * @prop {String} description Brief description of the task
+ * @prop {String} status Status of the task (due soon, ongoing, done, cancelled)
+ * @prop {String} dueBy Date and time when the task is due by
+ * @prop {Array} partners Array of user ids who are collaborating on the task
+ * @prop {Array} groups Array of group ids to which this task belong to
+ * @prop {Number} priority Number to quantify prioritization, higher number means higher priority
+ * @prop {Array} archive Array of archived task ids
+ * @prop {Array} trash Array of deleted task ids
+ */
 const tasksSchema = new mongoose.Schema({
-    name: {
+    title: {
         type: String,
         required: true,
         unique: false,
@@ -26,7 +38,7 @@ const tasksSchema = new mongoose.Schema({
         index: true,
     },
     partners: {
-        type: String,
+        type: Array,
         required: false,
         unique: false,
         index: true,
