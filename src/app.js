@@ -3,6 +3,9 @@ const path = require('path');
 const cors = require('cors')
 const createError = require('http-errors');
 const mongoose = require('mongoose');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+
 const taskRoutes = require('../routes/task_routes');
 
 const config = require('../config/config');
@@ -15,6 +18,8 @@ mongoose.connect(config.DB, {
 })
 
 app.use(cors());
+app.use(logger('dev'));
+app.use(cookieParser());
 
 app.use(express.json());
 
@@ -25,12 +30,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use((req, res, next) => {
     next(createError(404));
 });
+app.use((err, req, res) => {
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+    res.status(err.status || 500);
+    res.render('error');
+})
 
 app.use('/tasks', taskRoutes);
 
 app.listen(config.APP_PORT);
 
+console.log("Listening on: " + config.APP_PORT);
 
-app.listen(3000, () => {
-    console.log('Server up port: 3000')
-})
+module.exports = app;
